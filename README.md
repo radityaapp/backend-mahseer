@@ -18,7 +18,7 @@ Backend API untuk website **Exotic Mahseer** – mengelola katalog produk ikan, 
 - **Database**: MySQL 8+
 - **Media**: [spatie/laravel-medialibrary](https://github.com/spatie/laravel-medialibrary)
 - **Multi Bahasa**: [spatie/laravel-translatable](https://github.com/spatie/laravel-translatable)
-- **Multi Currency**:
+- **Multi Currency**
 - **Autentikasi Admin**: Filament login (user dari tabel `users`)
 
 ---
