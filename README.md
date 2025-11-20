@@ -19,9 +19,6 @@ Backend API untuk website **Exotic Mahseer** – mengelola katalog produk ikan, 
 - **Media**: [spatie/laravel-medialibrary](https://github.com/spatie/laravel-medialibrary)
 - **Multi Bahasa**: [spatie/laravel-translatable](https://github.com/spatie/laravel-translatable)
 - **Multi Currency**:
-  - Tabel `currencies` dengan kolom `exchange_rate`
-  - Service `App\Services\CurrencyConverter`
-  - Console command `currency:update` (dijadwalkan harian)
 - **Autentikasi Admin**: Filament login (user dari tabel `users`)
 
 ---
