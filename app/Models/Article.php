@@ -7,17 +7,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Translatable\HasTranslations;
+use Illuminate\Database\Eloquent\Builder;
 
 class Article extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia, HasTranslations;
 
     protected $table = 'article';
-    protected $appends = ['image_urls'];
+    protected $appends = ['featured_image_url', 'content_images_urls'];
     protected $hidden = ['media'];
 
     protected $fillable = [
         'created_by',
+        'author',
         'title',
         'content',
         'excerpt',
@@ -40,16 +42,33 @@ class Article extends Model implements HasMedia
         ];
     }
     
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query
+            ->where('is_published', true)
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now());
+    }
+    
     public function registerMediaCollections(): void
         {
-            $this->addMediaCollection('article_images')
-                ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/jpg']);
+        $this->addMediaCollection('featured_image')
+        ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/jpg'])
+        ->singleFile();
+
+        $this->addMediaCollection('content_images')
+        ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/jpg']);
         }
 
-    public function getImageUrlsAttribute()
+    public function getFeaturedImageUrlAttribute(): ?string
     {
-        return $this->getMedia('article_images')->map(function ($media) {
-            return $media->getUrl();
-        })->toArray();
+        return $this->getFirstMediaUrl('featured_image') ?: null;
+    }
+
+    public function getContentImagesUrlsAttribute(): array
+    {
+        return $this->getMedia('content_images')
+            ->map(fn ($media) => $media->getUrl())
+            ->toArray();
     }
 }

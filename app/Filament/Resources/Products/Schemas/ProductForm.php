@@ -4,13 +4,15 @@ namespace App\Filament\Resources\Products\Schemas;
 
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Support\Str;
 use App\Models\Category;
 
 class ProductForm
@@ -32,8 +34,9 @@ class ProductForm
                     TextInput::make('slug')
                         ->label('Slug')
                         ->required()
+                        ->maxLength(191)
                         ->unique(ignoreRecord: true)
-                        ->maxLength(255),
+                        ->helperText('Otomatis diisi dari Nama Produk (ID), tapi bisa diubah manual.'),
 
                     TextInput::make('price')
                         ->label('Harga')
@@ -48,6 +51,12 @@ class ProductForm
                         ->minValue(0)
                         ->default(0),
 
+                    TextInput::make('tokopedia_url')
+                        ->label('Tokopedia URL')
+                        ->url()
+                        ->nullable()
+                        ->helperText('Link ke halaman produk ini di Tokopedia.'),
+
                     Toggle::make('is_active')
                         ->label('Status')
                         ->default(true),
@@ -60,8 +69,14 @@ class ProductForm
                             Tabs\Tab::make('Indonesia')
                                 ->schema([
                                     TextInput::make('name.id')
-                                        ->label('Nama (ID)')
-                                        ->required(),
+                                        ->label('Name (ID)')
+                                        ->required()
+                                        ->live(debounce: 500)
+                                        ->afterStateUpdated(function (Get $get, Set $set, ?string $state) {
+                                        if (!filled($get('slug')) && filled($state)) {
+                                            $set('slug', Str::slug($state));
+                                        }
+                                    }),
 
                                     Textarea::make('general_information.id')
                                         ->label('Informasi Umum (ID)')

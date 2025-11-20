@@ -14,6 +14,9 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Support\Str;
 
 class ArticleForm
 {
@@ -24,7 +27,7 @@ class ArticleForm
                 ->columns(2)
                 ->schema([
                     Select::make('created_by')
-                        ->label('Penulis')
+                        ->label('Dibuat Oleh')
                         ->options(fn () => User::query()
                             ->orderBy('name')
                             ->pluck('name', 'id'))
@@ -32,11 +35,17 @@ class ArticleForm
                         ->preload()
                         ->nullable(),
 
+                    TextInput::make('author')
+                        ->label('Nama Penulis')
+                        ->required()
+                        ->maxLength(255),
+
                     TextInput::make('slug')
                         ->label('Slug')
                         ->required()
                         ->unique(ignoreRecord: true)
-                        ->maxLength(255),
+                        ->maxLength(255)
+                        ->helperText('Otomatis diisi dari Judul (ID), tapi bisa diubah manual.'),
 
                     Toggle::make('is_published')
                         ->label('Status')
@@ -57,7 +66,13 @@ class ArticleForm
                                 ->schema([
                                     TextInput::make('title.id')
                                         ->label('Judul (ID)')
-                                        ->required(),
+                                        ->required()
+                                        ->live(debounce: 500)
+                                        ->afterStateUpdated(function (Get $get, Set $set, ?string $state) {
+                                        if (!filled($get('slug')) && filled($state)) {
+                                            $set('slug', Str::slug($state));
+                                        }
+                                    }),
 
                                     Textarea::make('excerpt.id')
                                         ->label('Ringkasan (ID)')
@@ -87,12 +102,19 @@ class ArticleForm
 
             Section::make('Gambar Unggulan')
                 ->schema([
-                    SpatieMediaLibraryFileUpload::make('article_images')
-                        ->collection('article_images')
-                        ->label('Gambar Artikel')
-                        ->image()
-                        ->imageEditor()
-                        ->required(false),
+                    SpatieMediaLibraryFileUpload::make('featured_image')
+                                ->label('Gambar Utama')
+                                ->collection('featured_image')
+                                ->image()
+                                ->required(),
+
+                    SpatieMediaLibraryFileUpload::make('content_images')
+                                ->label('Gambar Konten')
+                                ->collection('content_images')
+                                ->image()
+                                ->multiple()
+                                ->reorderable()
+                                ->helperText('Gambar-gambar tambahan yang dipakai di dalam artikel'),
                 ]),
         ]);
     }

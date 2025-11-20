@@ -31,7 +31,7 @@ class UpdateCurrencyRates extends Command
         ]);
 
         if (! $response->ok()) {
-            $this->error('Failed to fetch rates: '.$response->status());
+            $this->error('Gaagal memperbarui nilai tukar mata uang: '.$response->status());
             return self::FAILURE;
         }
 

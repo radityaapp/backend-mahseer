@@ -17,11 +17,10 @@ use Filament\Tables\Table;
 class CurrencyResource extends Resource
 {
     protected static ?string $model = Currency::class;
-
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
     protected static ?string $navigationLabel = 'Mata Uang';
-
+    protected static ?string $pluralModelLabel = 'Mata Uang';
+    protected static ?string $modelLabel       = 'Mata Uang';
     protected static ?string $recordTitleAttribute = 'Currency';
 
     public static function form(Schema $schema): Schema

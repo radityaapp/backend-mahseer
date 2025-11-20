@@ -8,6 +8,9 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Support\Str;
 
 class CategoryForm
 {
@@ -29,7 +32,8 @@ class CategoryForm
                         ->label('Slug')
                         ->required()
                         ->unique(ignoreRecord: true)
-                        ->maxLength(255),
+                        ->maxLength(255)
+                        ->helperText('Otomatis diisi dari Nama Kategori (ID), tapi bisa diubah manual.'),
                 ]),
 
             Section::make('Terjemahan Nama Kategori')
@@ -40,7 +44,13 @@ class CategoryForm
                                 ->schema([
                                     TextInput::make('name.id')
                                         ->label('Nama (ID)')
-                                        ->required(),
+                                        ->required()
+                                        ->live(debounce: 500)
+                                        ->afterStateUpdated(function (Get $get, Set $set, ?string $state) {
+                                        if (!filled($get('slug')) && filled($state)) {
+                                            $set('slug', Str::slug($state));
+                                        }
+                                    }),
                                 ]),
 
                             Tab::make('English')

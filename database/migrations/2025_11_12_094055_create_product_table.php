@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->decimal('price', 10, 2)->default(0);
             $table->unsignedInteger('stock')->default(0);
+            $table->string('tokopedia_url')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

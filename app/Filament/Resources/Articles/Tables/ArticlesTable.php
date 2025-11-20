@@ -19,18 +19,17 @@ class ArticlesTable
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('article_images')
-                ->collection('article_images')
-                ->label('Gambar Sampul')
-                ->square()
-                ->size(48),
+                SpatieMediaLibraryImageColumn::make('featured_image')
+                    ->label('Gambar Utama')
+                    ->collection('featured_image')
+                    ->square(),
                 
                 TextColumn::make('title')
                     ->label('Judul')
                     ->limit(40)
                     ->searchable(),
 
-                TextColumn::make('author.name')
+                TextColumn::make('author')
                     ->label('Penulis')
                     ->sortable()
                     ->toggleable(),
@@ -45,7 +44,7 @@ class ArticlesTable
                     ->sortable(),
 
                 TextColumn::make('updated_at')
-                    ->label('Tanggal Diperbarui')
+                    ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -17,11 +17,10 @@ use Filament\Tables\Table;
 class TestimonialResource extends Resource
 {
     protected static ?string $model = Testimonial::class;
-
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChatBubbleLeftRight;
     protected static ?string $navigationLabel = 'Testimoni';
-
+    protected static ?string $pluralModelLabel = 'Testimoni';
+    protected static ?string $modelLabel       = 'Testimoni';
     protected static ?string $recordTitleAttribute = 'Testimonial';
 
     public static function form(Schema $schema): Schema

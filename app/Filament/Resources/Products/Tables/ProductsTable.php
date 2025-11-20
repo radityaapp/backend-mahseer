@@ -49,7 +49,7 @@ class ProductsTable
                     ->boolean(),
 
                 TextColumn::make('updated_at')
-                    ->label('Diperbarui')
+                    ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -62,9 +62,6 @@ class ProductsTable
                 TernaryFilter::make('is_active')
                     ->label('Aktif')
                     ->boolean(),
-            ])
-            ->filters([
-                //
             ])
             ->recordActions([
                 EditAction::make(),

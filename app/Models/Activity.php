@@ -4,31 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Translatable\HasTranslations;
-use Illuminate\Database\Eloquent\Builder;
 
-class Testimonial extends Model implements HasMedia
+class Activity extends Model implements HasMedia
 {
-use HasFactory, InteractsWithMedia, HasTranslations;
-
-    protected $table = 'testimonial';
-    protected $appends = ['image_urls'];
-    protected $hidden = ['media'];
+    use HasFactory, InteractsWithMedia, HasTranslations;
 
     protected $fillable = [
-        'name',
-        'description',
-        'institution',
-        'is_active',
+        'external_url',
         'order',
+        'is_active',
     ];
 
-    public $translatable = [
-        'description',
-        'institution',
-    ];
+    public $translatable = [];
 
     protected function casts(): array
     {
@@ -46,18 +37,16 @@ use HasFactory, InteractsWithMedia, HasTranslations;
     {
         return $query->orderBy('order');
     }
-    
+
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('avatar')
+        $this->addMediaCollection('activity_image')
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/jpg'])
             ->singleFile();
     }
 
-    public function getImageUrlsAttribute()
+    public function getImageUrlAttribute(): ?string
     {
-        return $this->getMedia('avatar')->map(function ($media) {
-            return $media->getUrl();
-        })->toArray();
+        return $this->getFirstMediaUrl('activity_image') ?: null;
     }
 }

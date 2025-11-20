@@ -17,11 +17,10 @@ use Filament\Tables\Table;
 class ArticleResource extends Resource
 {
     protected static ?string $model = Article::class;
-
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-    
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedNewspaper;
     protected static ?string $navigationLabel = 'Artikel';
-
+    protected static ?string $pluralModelLabel = 'Artikel';
+    protected static ?string $modelLabel       = 'Artikel';
     protected static ?string $recordTitleAttribute = 'Article';
 
     public static function form(Schema $schema): Schema
