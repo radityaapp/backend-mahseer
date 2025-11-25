@@ -5,7 +5,7 @@ return [
     'base_currency' => env('CURRENCY_BASE', 'IDR'),
 
     'format' => [
-        'decimals'            => 0,
+        'decimals'            => 2,
         'decimal_separator'   => ',',
         'thousands_separator' => '.',
     ],

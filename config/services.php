@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'openexchangerates' => [
+        'app_id' => env('OPEN_EXCHANGE_RATES_APP_ID'),
+        'url'    => env('OPEN_EXCHANGE_RATES_URL', 'https://openexchangerates.org/api/latest.json'),
+    ],
+
+
 ];
