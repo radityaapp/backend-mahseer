@@ -37,8 +37,8 @@ class ArticleResource extends JsonResource
                 ? $this->published_at->translatedFormat('d F Y')
                 : null,
 
-            'hero_image'    => $heroImage,
-            'images'        => $images,
+            'featured_image'    => $heroImage,
+            'content_images'        => $images,
             'frontend_url'  => $frontendUrl,
         ];
     }
