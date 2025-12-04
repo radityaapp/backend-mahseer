@@ -13,15 +13,11 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-
-        User::updateOrCreate([
-            'email' => 'test@example.com',
-            'name' => 'Test User',
-            'password' => Hash::make('password'),
-        ]);
         
         $this->call([
             CurrencySeeder::class,
+            AdminSeeder::class,
         ]);
+
     }
 }
