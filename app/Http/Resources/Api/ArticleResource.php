@@ -11,8 +11,8 @@ class ArticleResource extends JsonResource
     {
         $locale = app()->getLocale();
         
-        $heroImage = $this->getFirstMediaUrl('article_images');
-        $images = $this->getMedia('article_images')
+        $heroImage = $this->getFirstMediaUrl('featured_image') ?: null;
+        $images = $this->getMedia('content_images')
             ->map(fn ($media) => $media->getUrl())
             ->toArray();
         $authorName = $this->author
@@ -38,8 +38,8 @@ class ArticleResource extends JsonResource
                 : null,
 
             'featured_image'    => $heroImage,
-            'content_images'        => $images,
-            'frontend_url'  => $frontendUrl,
+            'content_images'    => $images,
+            'frontend_url'      => $frontendUrl,
         ];
     }
 }

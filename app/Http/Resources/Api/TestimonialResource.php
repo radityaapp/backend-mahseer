@@ -9,6 +9,7 @@ class TestimonialResource extends JsonResource
     public function toArray($request): array
     {
         $locale = app()->getLocale();
+        $avatarUrl = $this->image_urls[0] ?? null;
 
         return [
             'id'          => $this->id,
@@ -17,7 +18,7 @@ class TestimonialResource extends JsonResource
             'description' => $this->getTranslation('description', $locale),
             'order'       => $this->order,
             'is_active'   => (bool) $this->is_active,
-            'avatar'      => $this->image_urls[0] ?? null,
+            'avatar'      => $avatarUrl,
             'images'      => $this->image_urls,
         ];
     }
