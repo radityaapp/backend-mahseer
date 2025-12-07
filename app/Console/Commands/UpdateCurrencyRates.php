@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Currency;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 class UpdateCurrencyRates extends Command
 {
@@ -66,7 +67,19 @@ class UpdateCurrencyRates extends Command
             ]);
         }
 
-        $this->info('Update nilai tukar mata uang sukses.');
+        $ratesToCache = Currency::where('is_active', true)
+            ->pluck('exchange_rate', 'code')
+            ->map(fn ($rate) => (float) $rate)
+            ->toArray();
+
+        $symbolsToCache = Currency::pluck('symbol', 'code')->toArray();
+
+        $ttl = now()->addHours(26);
+
+        Cache::put('currency:rates', $ratesToCache, $ttl);
+        Cache::put('currency:symbols', $symbolsToCache, $ttl);
+
+        $this->info('Update nilai tukar mata uang sukses. Cache Redis ikut diperbarui.');
 
         return self::SUCCESS;
     }

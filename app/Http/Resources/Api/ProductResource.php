@@ -14,8 +14,12 @@ class ProductResource extends JsonResource
         $prices        = $this->prices_in_currencies ?? [];
         $baseCurrency  = Currency::base()?->code ?? 'IDR';
 
-        $displayCurrency = $request->query('currency', $baseCurrency);
-        $displayPrice    = $prices[$displayCurrency] ?? (float) $this->price;
+        $displayCurrency = strtoupper(
+            $request->query('currency', $baseCurrency)
+        );
+
+        $displayPrice = $prices[$displayCurrency] ?? (float) $this->price;
+
 
         return [
             'id'                    => $this->id,
@@ -24,14 +28,14 @@ class ProductResource extends JsonResource
             'general_information'   => $this->getTranslation('general_information', $locale),
             'description'           => $this->getTranslation('description', $locale),
             'price_base'            => (float) $this->price,
-            'prices'                => $this->prices_in_currencies,
+            'prices'                => $prices,
             'display_currency'      => $displayCurrency,
             'display_price'         => (float) $displayPrice,
             'stock'                 => $this->stock,
             'is_active'             => (bool) $this->is_active,
             'buy_links'             => [
-                'whatsapp'              => $this->whatsapp_url,
-                'tokopedia'             => $this->tokopedia_buy_url,
+                'whatsapp'          => $this->whatsapp_url,
+                'tokopedia'         => $this->tokopedia_buy_url,
             ],
 
             'category' => $this->whenLoaded('category', function () use ($locale) {

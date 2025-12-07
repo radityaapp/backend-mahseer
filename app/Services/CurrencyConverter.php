@@ -3,33 +3,67 @@
 namespace App\Services;
 
 use App\Models\Currency;
+use Illuminate\Support\Facades\Cache;
 use InvalidArgumentException;
 
 class CurrencyConverter
 {
+    protected function getRates(): array
+    {
+        $ttl = now()->addHours(26);
+
+        return Cache::remember('currency:rates', $ttl, function () {
+            return Currency::where('is_active', true)
+                ->pluck('exchange_rate', 'code')
+                ->map(fn ($rate) => (float) $rate)
+                ->toArray();
+        });
+    }
+
+    protected function getSymbols(): array
+    {
+        return Cache::rememberForever('currency:symbols', function () {
+            return Currency::pluck('symbol', 'code')->toArray();
+        });
+    }
+
+    protected function getRate(string $code): float
+    {
+        $code  = strtoupper($code);
+        $rates = $this->getRates();
+
+        if (! isset($rates[$code])) {
+            throw new InvalidArgumentException("Kode mata uang tidak dikenal: {$code}");
+        }
+
+        $rate = (float) $rates[$code];
+
+        if ($rate <= 0) {
+            throw new InvalidArgumentException("Nilai kurs tidak valid untuk: {$code}");
+        }
+
+        return $rate;
+    }
+
     public function convert(float|int $amount, string $fromCode, string $toCode): float
     {
         $fromCode = strtoupper($fromCode);
         $toCode   = strtoupper($toCode);
 
-        $from = Currency::where('code', $fromCode)->first();
-        $to   = Currency::where('code', $toCode)->first();
+        $fromRate = $this->getRate($fromCode);
+        $toRate   = $this->getRate($toCode);
 
-        if (! $from || ! $to) {
-            throw new InvalidArgumentException('Kode mata uang tidak dikenal.');
-        }
-
-        $amountInBase = $amount / (float) $from->exchange_rate;
-        $converted    = $amountInBase * (float) $to->exchange_rate;
+        $amountInBase = $amount / $fromRate;
+        $converted    = $amountInBase * $toRate;
 
         return $converted;
     }
 
     public function format(float|int $amount, string $code): string
     {
-        $currency = Currency::where('code', strtoupper($code))->first();
-
-        $symbol = $currency?->symbol ?? '';
+        $code     = strtoupper($code);
+        $symbols  = $this->getSymbols();
+        $symbol   = $symbols[$code] ?? '';
 
         $decimals = config('currency.format.decimals');
         $decSep   = config('currency.format.decimal_separator');
@@ -40,17 +74,21 @@ class CurrencyConverter
 
     public function pricesForProduct(float|int $baseAmount): array
     {
-        $baseCode   = config('currency.base_currency', 'IDR');
-        $currencies = Currency::where('is_active', true)->get();
+        $baseCode = strtoupper(config('currency.base_currency', 'IDR'));
+        $rates    = $this->getRates();
+
+        if (! isset($rates[$baseCode])) {
+            throw new InvalidArgumentException("Kode mata uang tidak dikenal: {$baseCode}");
+        }
 
         $result = [];
 
-        foreach ($currencies as $currency) {
-            $converted = $this->convert($baseAmount, $baseCode, $currency->code);
+        foreach ($rates as $code => $rate) {
+            $converted = $this->convert($baseAmount, $baseCode, $code);
 
-            $result[$currency->code] = [
+            $result[$code] = [
                 'raw'   => $converted,
-                'label' => $this->format($converted, $currency->code),
+                'label' => $this->format($converted, $code),
             ];
         }
 
