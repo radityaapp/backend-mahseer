@@ -49,13 +49,14 @@ class ArticleForm
 
                     Toggle::make('is_published')
                         ->label('Status')
-                        ->default(false),
+                        ->default(true),
 
                     DateTimePicker::make('published_at')
                         ->label('Tanggal Terbit')
                         ->seconds(false)
-                        ->nullable()
-                        ->helperText('Optional, bisa dikosongkan untuk draft.'),
+                        ->default(now())
+                        ->required()
+                        ->helperText('Hanya artikel dengan status aktif & tanggal terbit ≤ hari ini yang muncul di website.'),
                 ]),
 
             Section::make('Konten')
