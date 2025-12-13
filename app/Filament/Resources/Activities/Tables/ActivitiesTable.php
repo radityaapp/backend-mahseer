@@ -7,6 +7,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 
@@ -20,6 +21,10 @@ class ActivitiesTable
                     ->label('Gambar Aktifitas')
                     ->collection('activity_image')
                     ->square(),
+                TextColumn::make('title')
+                    ->label('Judul')
+                    ->searchable()
+                    ->limit(40),
                 TextColumn::make('external_url')
                     ->label('Eksternal URL')
                     ->searchable(),
@@ -42,7 +47,9 @@ class ActivitiesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                TernaryFilter::make('is_active')
+                    ->label('Aktif')
+                    ->boolean(),
             ])
             ->recordActions([
                 EditAction::make(),

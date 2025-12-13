@@ -9,12 +9,15 @@ class ActivityResource extends JsonResource
     public function toArray($request): array
     {
         $locale = app()->getLocale();
+        $heroImage = $this->getFirstMediaUrl('featured_image') ?: null;
 
         return [
             'id'          => $this->id,
+            'title'       => $this->getTranslation('title', $locale),
+            'description' => $this->getTranslation('description', $locale),
             'external_url'=> $this->external_url,
             'order'       => $this->order,
-            'image'       => $this->getFirstMediaUrl('activity_image') ?: null,
+            'image'       => $heroImage,
             'is_active'   => $this->is_active,
         ];
     }

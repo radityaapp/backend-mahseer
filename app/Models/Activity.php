@@ -12,14 +12,21 @@ use Spatie\Translatable\HasTranslations;
 class Activity extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia, HasTranslations;
+    protected $appends = ['featured_image_url'];
+    protected $hidden = ['media'];
 
     protected $fillable = [
+        'title',
+        'description',
         'external_url',
         'order',
         'is_active',
     ];
 
-    public $translatable = [];
+    public $translatable = [
+        'title',
+        'description',
+    ];
 
     protected function casts(): array
     {
@@ -40,13 +47,13 @@ class Activity extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('activity_image')
+        $this->addMediaCollection('featured_image')
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/jpg'])
             ->singleFile();
     }
 
-    public function getImageUrlAttribute(): ?string
+    public function getFeaturedImageUrlAttribute(): ?string
     {
-        return $this->getFirstMediaUrl('activity_image') ?: null;
+        return $this->getFirstMediaUrl('featured_image') ?: null;
     }
 }

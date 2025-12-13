@@ -11,6 +11,9 @@ class TestimonialController extends Controller
 {
     public function index(Request $request)
     {
+        $locale = $request->query('lang', config('app.locale'));
+            app()->setLocale($locale);
+            
         $testimonials = Testimonial::query()
             ->active()
             ->ordered()

@@ -11,11 +11,13 @@ class ActivityController extends Controller
 {
     public function index(Request $request)
     {
+        $locale = $request->query('lang', config('app.locale'));
+            app()->setLocale($locale);
         $validated = $request->validate([
             'limit' => ['nullable', 'integer', 'min:1', 'max:50'],
         ]);
 
-        $limit = $validated['limit'] ?? 8;
+        $limit = $validated['limit'] ?? 10;
 
         $activities = Activity::query()
             ->active()

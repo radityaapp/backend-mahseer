@@ -10,6 +10,8 @@ return new class extends Migration
     {
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
+            $table->json('title');
+            $table->json('description');
             $table->string('external_url')->nullable();
             $table->unsignedInteger('order')->default(0);
             $table->boolean('is_active')->default(true);

@@ -23,7 +23,7 @@ class HomeController extends Controller
         $productsLimit     = (int) $request->query('products_limit', 4);
         $articlesLimit     = (int) $request->query('articles_limit', 3);
         $testimonialsLimit = (int) $request->query('testimonials_limit', 5);
-        $activitiesLimit   = (int) $request->query('activities_limit', 8);
+        $activitiesLimit   = (int) $request->query('activities_limit', 10);
 
         $products = Product::query()
             ->with(['category', 'media'])
