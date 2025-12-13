@@ -17,9 +17,9 @@ class ActivitiesTable
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('activity_image')
+                SpatieMediaLibraryImageColumn::make('featured_image')
                     ->label('Gambar Aktifitas')
-                    ->collection('activity_image')
+                    ->collection('featured_image')
                     ->square(),
                 TextColumn::make('title')
                     ->label('Judul')
